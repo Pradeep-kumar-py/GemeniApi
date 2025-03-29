@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { FiDownload, FiZoomIn, FiZoomOut, FiMaximize, FiCheck, FiX } from 'react-icons/fi';
+import { useUser } from '@clerk/clerk-react';
+import axios from 'axios';
 
 const DocumentTypes = [
   { id: 1, name: 'ID Card' },
@@ -28,9 +30,12 @@ const VerifyDocument = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [documentId, setDocumentId] = useState('DOC-2023-0015');
   const [error, setError] = useState('');
+  const [uploadStatus, setUploadStatus] = useState({ message: '', type: '' });
+  const [isUploading, setIsUploading] = useState(false);
   
   const fileInputRef = useRef(null);
   const previewRef = useRef(null);
+  const { user } = useUser();
 
   useEffect(() => {
     if (!file) return;
@@ -139,9 +144,80 @@ const VerifyDocument = () => {
     });
   };
 
-  const handleApprove = () => {
-    // Here you would implement the approval logic
-    alert(`Document ${documentId} approved`);
+  const handleApprove = async () => {
+    if (!file) {
+      setUploadStatus({ 
+        message: 'Please select a file to upload.', 
+        type: 'error' 
+      });
+      return;
+    }
+
+    if (!user?.primaryEmailAddress?.emailAddress) {
+      setUploadStatus({ 
+        message: 'User email not found. Please sign in.', 
+        type: 'error' 
+      });
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      setUploadStatus({ message: 'Uploading document...', type: 'info' });
+
+      // Create FormData object
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('email', user.primaryEmailAddress.emailAddress);
+      
+      // Add additional metadata if needed
+      if (selectedDocType) formData.append('documentType', selectedDocType);
+      if (selectedCandidate) formData.append('candidateId', selectedCandidate);
+      if (notes) formData.append('notes', notes);
+      formData.append('documentId', documentId);
+
+      // Make the API request
+      const response = await axios.post('http://localhost:3000/api/v1/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+        }
+      });
+
+      // Handle successful response
+      setUploadStatus({
+        message: `Document ${documentId} approved and uploaded successfully!`,
+        type: 'success'
+      });
+
+      // Reset all form fields after successful upload
+      setFile(null);
+      setPreview('');
+      setNotes('');
+      setSelectedCandidate('');
+      setSelectedDocType('');
+      setUploadProgress(0);
+      setError('');
+      
+      // Generate new document ID (simple increment for example)
+      const newDocId = documentId.replace(/\d+$/, match => {
+        const num = parseInt(match) + 1;
+        return num.toString().padStart(match.length, '0');
+      });
+      setDocumentId(newDocId);
+      
+    } catch (error) {
+      console.error('Error uploading document:', error);
+      setUploadStatus({
+        message: `Upload failed: ${error.response?.data?.message || error.message}`,
+        type: 'error'
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleReject = () => {
@@ -155,6 +231,17 @@ const VerifyDocument = () => {
         <div className="p-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Document Verification</h1>
           
+          {/* Display upload status messages */}
+          {uploadStatus.message && (
+            <div className={`mb-6 p-4 rounded-md ${
+              uploadStatus.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' :
+              uploadStatus.type === 'error' ? 'bg-red-50 text-red-800 border border-red-200' : 
+              'bg-blue-50 text-blue-800 border border-blue-200'
+            }`}>
+              <p>{uploadStatus.message}</p>
+            </div>
+          )}
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {/* Document ID Display */}
             <div className="md:col-span-2">
@@ -164,6 +251,16 @@ const VerifyDocument = () => {
               </div>
             </div>
             
+            {/* User Email Display */}
+            <div className="md:col-span-2">
+              <div className="bg-gray-100 p-3 rounded-lg">
+                <span className="text-sm text-gray-500">User Email:</span>
+                <span className="ml-2 font-medium text-gray-800">
+                  {user?.primaryEmailAddress?.emailAddress || 'Not signed in'}
+                </span>
+              </div>
+            </div>
+
             {/* Candidate Dropdown */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -342,17 +439,31 @@ const VerifyDocument = () => {
           <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
             <button
               onClick={handleReject}
-              className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 flex items-center justify-center"
+              disabled={isUploading}
+              className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 flex items-center justify-center disabled:opacity-50"
             >
               <FiX className="mr-2" />
               Reject Document
             </button>
             <button
               onClick={handleApprove}
-              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
+              disabled={isUploading || !file}
+              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center disabled:opacity-50"
             >
-              <FiCheck className="mr-2" />
-              Approve Document
+              {isUploading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <FiCheck className="mr-2" />
+                  Approve & Upload Document
+                </>
+              )}
             </button>
           </div>
         </div>

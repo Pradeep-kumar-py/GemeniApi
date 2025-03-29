@@ -25,7 +25,7 @@ const LandingPage = () => {
     }, []);
     const UserProfile = () => {
         return (
-            <div className="flex items-center justify-center  rounded-full bg-gray-200 ">
+            <div className="flex items-center justify-center  rounded-full ">
                 <SignedOut>
                     <SignInButton />
                 </SignedOut>
