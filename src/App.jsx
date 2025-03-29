@@ -1,34 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import axios from 'axios'
 import Dashboard from './pages/dashboard'
 import OfferLetter from './pages/OfferLater'
 import ChatBot from './components/chatBot'
 import VerifyDocument from './pages/VerifyDocument'
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
-// import { configDotenv } from 'dotenv'
+import { useUser } from '@clerk/clerk-react'
+import LandingPage from './pages/landingPage'
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom';
+
 
 function App() {
 
-
-
   return (
     <>
-      <div className="flex flex-col">
-        <header className='border-2 w-14'>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </header>
-        <Dashboard />
-        <OfferLetter />
-        <ChatBot />
-        <VerifyDocument />
+      <div>
+
       </div>
+
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/dashboard" element={
+          <div>
+            <Dashboard />
+            <OfferLetter />
+            <ChatBot />
+          </div>
+        } />
+        <Route path="/offer-letter" element={
+          <div>
+            <Dashboard />
+            <OfferLetter />
+            <ChatBot />
+          </div>
+        } />
+        {/* <Route path="/chat-bot" element={
+          <div>
+            <Dashboard />
+            <ChatBot />
+          </div>
+        } /> */}
+
+        <Route path="/verify-document" element={
+          <div>
+            <Dashboard />
+          <VerifyDocument />
+            <ChatBot />
+          </div>
+          } />
+        <Route path="/compleated" element={
+          <div>
+            <Dashboard />
+            <ChatBot /> 
+          </div>
+          } />
+
+      </Routes>
     </>
   )
 }
