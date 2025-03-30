@@ -116,57 +116,57 @@ const HRChatbot = () => {
   }, []);
 
   // Cheating checker with updated logic
-  // useEffect(() => {
-  //   if (!cheatingCheckEnabled) return; // Disable cheating check if not enabled
+  useEffect(() => {
+    if (!cheatingCheckEnabled) return; // Disable cheating check if not enabled
 
-  //   const handleFocus = () => setIsCheating(false);
-  //   const handleBlur = () => {
-  //     setIsCheating(true);
-  //     setDeceptionAttempts((prev) => prev + 1); // Increment deception attempts
-  //     alert('Focus lost! Please stay on the interview page.');
-  //   };
+    const handleFocus = () => setIsCheating(false);
+    const handleBlur = () => {
+      setIsCheating(true);
+      setDeceptionAttempts((prev) => prev + 1); // Increment deception attempts
+      alert('Focus lost! Please stay on the interview page.');
+    };
 
-  //   const handleDevToolsOpen = () => {
-  //     setIsCheating(true);
-  //     setDeceptionAttempts((prev) => prev + 1); // Increment deception attempts
-  //     alert('Developer tools are disabled during the interview.');
-  //     window.close(); // Close the window if dev tools are opened
-  //   };
+    const handleDevToolsOpen = () => {
+      setIsCheating(true);
+      setDeceptionAttempts((prev) => prev + 1); // Increment deception attempts
+      alert('Developer tools are disabled during the interview.');
+      window.close(); // Close the window if dev tools are opened
+    };
 
-  //   // Detect focus/blur
-  //   window.addEventListener('focus', handleFocus);
-  //   window.addEventListener('blur', handleBlur);
+    // Detect focus/blur
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('blur', handleBlur);
 
-  //   // Detect developer tools
-  //   const detectDevTools = () => {
-  //     let devtoolsOpen = false;
-  //     const element = new Image();
-  //     Object.defineProperty(element, 'id', {
-  //       get: () => {
-  //         devtoolsOpen = true;
-  //         handleDevToolsOpen();
-  //       },
-  //     });
+    // Detect developer tools
+    const detectDevTools = () => {
+      let devtoolsOpen = false;
+      const element = new Image();
+      Object.defineProperty(element, 'id', {
+        get: () => {
+          devtoolsOpen = true;
+          handleDevToolsOpen();
+        },
+      });
 
-  //     const checkDevTools = () => {
-  //       devtoolsOpen = false;
-  //       console.log(element);
-  //       if (devtoolsOpen) {
-  //         handleDevToolsOpen();
-  //       }
-  //     };
+      const checkDevTools = () => {
+        devtoolsOpen = false;
+        console.log(element);
+        if (devtoolsOpen) {
+          handleDevToolsOpen();
+        }
+      };
 
-  //     const interval = setInterval(checkDevTools, 1000);
-  //     return () => clearInterval(interval);
-  //   };
-  //   const stopDetectDevTools = detectDevTools();
+      const interval = setInterval(checkDevTools, 1000);
+      return () => clearInterval(interval);
+    };
+    const stopDetectDevTools = detectDevTools();
 
-  //   return () => {
-  //     window.removeEventListener('focus', handleFocus);
-  //     window.removeEventListener('blur', handleBlur);
-  //     stopDetectDevTools();
-  //   };
-  // }, [cheatingCheckEnabled]);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('blur', handleBlur);
+      stopDetectDevTools();
+    };
+  }, [cheatingCheckEnabled]);
 
   // Function to fetch chatbot response from Gemini API
 

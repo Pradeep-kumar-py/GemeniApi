@@ -177,7 +177,7 @@ const VerifyDocument = () => {
       formData.append('documentId', documentId);
 
       // Make the API request
-      const response = await axios.post('http://localhost:3000/api/v1/upload', formData, {
+      const response = await axios.post('https://backendfrostartupsaga-production.up.railway.app/api/v1/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
