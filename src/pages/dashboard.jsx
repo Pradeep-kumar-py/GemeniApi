@@ -18,7 +18,7 @@ const Dashboard = () => {
     ]);
 
     const userData = {
-        name: user.fullName || Pradeep,
+        name: user?.fullName || "Pradeep",
         progress: Progress,
         totalSteps: 3,
         hrContact: {

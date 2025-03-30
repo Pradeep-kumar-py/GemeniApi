@@ -54,7 +54,7 @@ const LandingPage = () => {
                         className="w-32 h-32 md:w-40 md:h-40 mb-6 bg-blue-500 rounded-full flex items-center justify-center text-white"
                         whileHover={{ scale: 1.05 }}
                     >
-                        <span className="text-4xl md:text-5xl font-bold">Logo</span>
+                        <span className="text-4xl md:text-5xl font-bold"><img src="/p11.svg" alt="" /></span>
                     </motion.div>
 
                     <motion.h1
@@ -63,7 +63,7 @@ const LandingPage = () => {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5, duration: 1 }}
                     >
-                        Company Name
+                        Blue Bricks Remote HR
                     </motion.h1>
                 </motion.div>
 

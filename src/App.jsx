@@ -5,7 +5,8 @@ import VerifyDocument from './pages/VerifyDocument'
 import { useUser } from '@clerk/clerk-react'
 import LandingPage from './pages/landingPage'
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom';
-
+import HRChatbot from './components/HRChatbot'
+import Completed from './components/compleated'
 
 function App() {
 
@@ -19,16 +20,14 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/dashboard" element={
           <div>
-            <Dashboard />
-            <OfferLetter />
-            <ChatBot />
+            <HRChatbot/>
           </div>
         } />
         <Route path="/offer-letter" element={
           <div>
             <Dashboard />
             <OfferLetter />
-            <ChatBot />
+            
           </div>
         } />
         {/* <Route path="/chat-bot" element={
@@ -42,13 +41,13 @@ function App() {
           <div>
             <Dashboard />
           <VerifyDocument />
-            <ChatBot />
+            
           </div>
           } />
         <Route path="/compleated" element={
           <div>
             <Dashboard />
-            <ChatBot /> 
+            <Completed />
           </div>
           } />
 

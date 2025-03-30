@@ -262,7 +262,7 @@ const VerifyDocument = () => {
             </div>
 
             {/* Candidate Dropdown */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Select Candidate
               </label>
@@ -278,7 +278,7 @@ const VerifyDocument = () => {
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
             
             {/* Document Type Dropdown */}
             <div>
@@ -422,7 +422,7 @@ const VerifyDocument = () => {
           )}
           
           {/* Verification Notes */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Verification Notes
             </label>
@@ -433,7 +433,7 @@ const VerifyDocument = () => {
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
               placeholder="Add notes about document verification..."
             />
-          </div>
+          </div> */}
           
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
